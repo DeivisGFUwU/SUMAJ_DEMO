@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Construye con SUMAJ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@500;700&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* VOICE  occasion: a calm, trustworthy workshop website, hushed rather than loud
+   IDEA   the carpenter's drawing table: a live 3/4 drawing of the shelf with its dimension lines, like a workshop plan
+   PICTURE the configured shelf unit drawn large in melamine colour, with books, cotas and a floor shadow
+   COLOUR warm bone ground, deep workshop green leading, oak as the supporting wood tone, one sage tint for panels
+   TYPE   League Spartan (display, from the group's deck) + Montserrat (text)
+   LAYOUT laptop: title row, then drawing left (58%) and controls + price right; phone: title, drawing, sticky price, controls */
+:root{color-scheme:light dark;--bg:light-dark(#f5f1ea,#121813);--ink:light-dark(#1e2a1d,#ece8df);--soft:light-dark(#5f6b5e,#a9b3a6);--green:light-dark(#2f4a33,#8fb38f);--greenInk:light-dark(#ffffff,#0f1610);--panel:light-dark(#ffffff,#1b231c);--line:light-dark(#ddd6ca,#2e3a30);--sage:light-dark(#e3e9df,#1f2a21);--oak:#b9833a;--floor:light-dark(#e9e2d6,#0d120e)}
+:root[data-theme=light]{color-scheme:light}
+:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.55 Montserrat,"Segoe UI",system-ui,sans-serif;overflow-x:clip}
+h1,h2,h3,.disp{font-family:"League Spartan",Montserrat,system-ui,sans-serif;letter-spacing:-.02em;line-height:1.05;margin:0}
+a{color:inherit}
+.band{padding-block:clamp(24px,4vw,56px);padding-left:max(5vw,16px);padding-right:max(5vw,16px)}
+.wrap{max-width:1240px;margin:0 auto}
+.proto{background:var(--green);color:var(--greenInk);font-size:13px;padding:8px max(5vw,16px);text-align:center}
+nav{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;padding:14px max(5vw,16px);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:10px;font-family:"League Spartan",sans-serif;font-weight:700;font-size:22px;color:var(--green);text-decoration:none}
+.brand svg{width:30px;height:30px}
+nav ul{display:flex;flex-wrap:wrap;gap:20px;list-style:none;margin:0;padding:0;font-size:14px}
+nav ul a{text-decoration:none;color:var(--soft)}
+nav ul a:hover{color:var(--ink)}
+.head{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:16px;margin-bottom:20px}
+.head h1{font-size:clamp(32px,4.4vw,48px);font-weight:700;color:var(--green)}
+.head p{margin:8px 0 0;color:var(--soft);max-width:60ch}
+.presets{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font:500 14px Montserrat,sans-serif;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:999px;padding:10px 16px;cursor:pointer;min-height:44px}
+.chip[aria-pressed=true]{background:var(--green);color:var(--greenInk);border-color:var(--green)}
+.cfg{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);gap:20px;align-items:stretch}
+.stage{background:var(--panel);border:1px solid var(--line);border-radius:18px;position:relative;min-height:520px;overflow:hidden}
+.fig{position:absolute;inset:0}
+.fig>svg{position:absolute;inset:0;width:100%;height:100%}
+.view{position:absolute;top:14px;left:14px;display:flex;gap:6px;z-index:2}
+.view .chip{min-height:36px;padding:6px 12px;font-size:13px}
+.side{display:flex;flex-direction:column;gap:14px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:18px 20px}
+.row{display:grid;grid-template-columns:7.5em minmax(0,1fr) 4.5em;align-items:center;gap:10px;margin-block:8px}
+.row label{font-size:14px;color:var(--soft)}
+.row output{font-weight:600;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:var(--green);height:32px}
+.toggles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:10px}
+.tg{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:14px;cursor:pointer;min-height:44px}
+.tg input{width:18px;height:18px;accent-color:var(--green)}
+.step{display:flex;align-items:center;gap:8px}
+.step button{width:36px;height:36px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font-size:18px;cursor:pointer}
+.sw{display:flex;flex-wrap:wrap;gap:10px;margin-top:6px}
+.sw button{width:44px;height:44px;border-radius:50%;border:2px solid var(--line);cursor:pointer;position:relative}
+.sw button[aria-pressed=true]{outline:3px solid var(--green);outline-offset:2px}
+.swname{font-size:14px;color:var(--soft);margin-top:6px}
+.price{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:end;gap:6px 16px}
+.price .big{font-family:"League Spartan",sans-serif;font-weight:700;font-size:clamp(40px,5vw,56px);color:var(--green);white-space:nowrap;line-height:1}
+.price small{color:var(--soft);font-size:13px}
+.cta{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+.btn{font:600 15px Montserrat,sans-serif;border-radius:12px;padding:12px 18px;min-height:46px;cursor:pointer;border:1px solid var(--green);background:var(--green);color:var(--greenInk)}
+.btn.ghost{background:transparent;color:var(--green)}
+.btn:focus-visible,.chip:focus-visible,.sw button:focus-visible{outline:3px solid var(--oak);outline-offset:2px}
+.break{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 12px;font-size:14px;color:var(--soft);margin-top:12px;border-top:1px dashed var(--line);padding-top:10px}
+.break span:nth-child(even){text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+.steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;margin-top:22px}
+.steps article{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px}
+.steps svg{width:56px;height:56px;margin-bottom:8px}
+.steps h3{font-size:22px;color:var(--green);margin-bottom:6px}
+.steps p{margin:0;font-size:15px;color:var(--soft)}
+h2{font-size:clamp(28px,3.4vw,38px);color:var(--green)}
+.why{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:28px;align-items:center}
+.facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.fact{border-left:3px solid var(--oak);padding:6px 0 6px 14px}
+.fact b{display:block;font-family:"League Spartan",sans-serif;font-size:34px;color:var(--ink);line-height:1.05}
+.fact span{font-size:14px;color:var(--soft)}
+.green{background:var(--green);color:var(--greenInk)}
+.green h2{color:var(--greenInk)}
+.ref{width:100%;border-collapse:collapse;margin-top:16px;font-size:15px}
+.ref th,.ref td{text-align:left;padding:10px 8px;border-bottom:1px solid color-mix(in srgb,var(--greenInk) 25%,transparent)}
+.ref td:last-child,.ref th:last-child{text-align:right;white-space:nowrap}
+.scroll{overflow-x:auto}
+footer{font-size:14px;color:var(--soft)}
+footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
+dialog{border:1px solid var(--line);border-radius:18px;background:var(--panel);color:var(--ink);max-width:min(520px,92vw);padding:22px}
+dialog::backdrop{background:rgb(0 0 0/.35)}
+.wa{background:light-dark(#e7f3e4,#1d2b1f);border-radius:14px 14px 14px 4px;padding:14px;white-space:pre-wrap;font-size:14px;margin:12px 0}
+.sticky{display:none}
+@media(max-width:900px){.cfg{grid-template-columns:minmax(0,1fr)}.stage{min-height:420px}.why{grid-template-columns:minmax(0,1fr)}.steps{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){nav ul{display:none}.facts{grid-template-columns:minmax(0,1fr)}.steps{grid-template-columns:minmax(0,1fr)}.stage{min-height:360px}.sticky{display:flex;position:sticky;bottom:0;z-index:5;justify-content:space-between;align-items:center;gap:10px;background:var(--green);color:var(--greenInk);padding:10px 16px;font-weight:600}.row{grid-template-columns:6.5em minmax(0,1fr) 4em}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="proto" role="note">Prototipo académico (ESAN · Diseño y Evaluación de Proyectos · Grupo 6). No es el sitio oficial de SUMAJ S.A.C.: los precios son referenciales y no se envían pedidos.</div>
+<nav>
+  <a class="brand" href="#configura"><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="5" width="26" height="24" rx="3" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M3 13h26M3 21h26" stroke="currentColor" stroke-width="2.4"/><rect x="7" y="7.5" width="3" height="4.5" fill="#b9833a"/><rect x="11" y="8.5" width="3" height="3.5" fill="currentColor"/></svg>Construye con SUMAJ</a>
+  <ul><li><a href="#configura">Diseña</a></li><li><a href="#como">Cómo funciona</a></li><li><a href="#taller">El taller</a></li><li><a href="#precios">Precios</a></li></ul>
+</nav>
+
+<main>
+<section class="band" id="configura"><div class="wrap">
+  <div class="head">
+    <div><h1>Diseña tu mueble de repisas</h1><p>Estante, librero o centro de TV a la medida de tu espacio. Mueve las medidas, elige el color y mira el precio al instante.</p></div>
+    <div class="presets" role="group" aria-label="Modelos de partida" id="presets"></div>
+  </div>
+  <div class="cfg">
+    <div class="stage">
+      <div class="view" role="group" aria-label="Vista"><button class="chip" id="v34" aria-pressed="true">Vista 3/4</button><button class="chip" id="vfr" aria-pressed="false">Frontal</button></div>
+      <div class="fig" id="fig" role="img" aria-label="Dibujo del mueble configurado"></div>
+    </div>
+    <div class="side">
+      <div class="card">
+        <div class="row"><label for="w">Ancho</label><input id="w" type="range" min="60" max="180" step="10"><output id="wo"></output></div>
+        <div class="row"><label for="h">Alto</label><input id="h" type="range" min="50" max="210" step="10"><output id="ho"></output></div>
+        <div class="row"><label for="d">Fondo</label><input id="d" type="range" min="25" max="45" step="5"><output id="do"></output></div>
+        <div class="row"><label>Repisas</label><div class="step"><button id="nminus" aria-label="Quitar repisa">−</button><button id="nplus" aria-label="Agregar repisa">+</button></div><output id="no"></output></div>
+        <div class="toggles">
+          <label class="tg"><input type="checkbox" id="doors">Puertas abajo</label>
+          <label class="tg"><input type="checkbox" id="drawer">Cajón</label>
+          <label class="tg"><input type="checkbox" id="led">Luz LED cálida</label>
+          <label class="tg"><input type="checkbox" id="back">Fondo de trupan</label>
+        </div>
+        <div class="sw" role="group" aria-label="Color de melamina" id="sw"></div>
+        <div class="swname" id="swname"></div>
+      </div>
+      <div class="card">
+        <div class="price"><div><small>Precio referencial con IGV</small><div class="big" id="price">S/ 590</div></div><small id="area"></small></div>
+        <details style="margin-top:10px"><summary style="cursor:pointer;font-size:14px;color:var(--soft)">Cómo se calcula este precio</summary><div class="break" id="break"></div></details>
+        <div class="cta"><button class="btn" id="wa">Cotizar por WhatsApp</button><button class="btn ghost" id="copy">Copiar diseño</button><button class="btn ghost" id="reset">Reiniciar</button></div>
+        <p style="font-size:13px;color:var(--soft);margin:10px 0 0">Incluye la visita para medir tu espacio, la fabricación en nuestro taller y la entrega en Lima Este. El precio final se confirma en la visita.</p>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<section class="band" id="como" style="background:var(--sage)"><div class="wrap">
+  <h2>Así llega tu mueble a casa</h2>
+  <div class="steps">
+    <article><svg viewBox="0 0 56 56"><rect x="8" y="10" width="40" height="30" rx="4" fill="none" stroke="var(--green)" stroke-width="3"/><path d="M20 46h16M28 40v6" stroke="var(--green)" stroke-width="3"/><rect x="16" y="16" width="12" height="18" fill="var(--oak)"/><path d="M16 25h12" stroke="#fff" stroke-width="2"/></svg><h3>Diseña</h3><p>Elige medidas, repisas y color. Ves el mueble y su precio mientras lo armas.</p></article>
+    <article><svg viewBox="0 0 56 56"><path d="M12 44V14h22l10 10v20z" fill="none" stroke="var(--green)" stroke-width="3"/><path d="M18 28h18M18 35h12" stroke="var(--oak)" stroke-width="3"/></svg><h3>Cotiza</h3><p>El cotizador calcula un precio referencial con IGV, sin registrarte.</p></article>
+    <article><svg viewBox="0 0 56 56"><path d="M28 8a19 19 0 0 0-16.5 28.4L9 47l10.9-2.6A19 19 0 1 0 28 8z" fill="none" stroke="var(--green)" stroke-width="3"/><path d="M21 22c1 6 5 10 12 12l3-3-4-3-2 2c-2-1-4-3-5-5l2-2-3-4z" fill="var(--oak)"/></svg><h3>Coordina</h3><p>Tu diseño llega por WhatsApp y acordamos la visita de medición.</p></article>
+    <article><svg viewBox="0 0 56 56"><path d="M8 44h40" stroke="var(--green)" stroke-width="3"/><rect x="14" y="14" width="18" height="30" fill="none" stroke="var(--green)" stroke-width="3"/><path d="M14 24h18M14 34h18" stroke="var(--green)" stroke-width="3"/><path d="M38 44V22l6-4" stroke="var(--oak)" stroke-width="3" fill="none"/></svg><h3>Fabricamos</h3><p>Medimos, cortamos con optimizador y entregamos el mueble armado.</p></article>
+  </div>
+</div></section>
+
+<section class="band" id="taller"><div class="wrap why">
+  <div><h2>Un taller de Ñaña que trabaja con medida</h2><p style="color:var(--soft);max-width:52ch">SUMAJ fabrica muebles a medida y hace remodelaciones desde hace más de 17 años. Ahora puedes diseñar desde tu celular y hablar directamente con el taller.</p></div>
+  <div class="facts">
+    <div class="fact"><b>17+</b><span>años de experiencia en muebles y remodelación</span></div>
+    <div class="fact"><b>18 mm</b><span>melamina con canto de PVC en todos los bordes</span></div>
+    <div class="fact"><b>12%</b><span>de merma con corte optimizado, frente a 20% del corte manual</span></div>
+  </div>
+</div></section>
+
+<section class="band green" id="precios"><div class="wrap">
+  <h2>Precios de referencia</h2>
+  <div class="scroll"><table class="ref"><thead><tr><th>Modelo</th><th>Medidas (ancho × alto × fondo)</th><th>Desde</th></tr></thead><tbody id="ref"></tbody></table></div>
+  <div class="cta"><button class="btn ghost" style="border-color:var(--greenInk);color:var(--greenInk)" onclick="document.getElementById('configura').scrollIntoView({behavior:'smooth'})">Diseñar el mío</button></div>
+</div></section>
+</main>
+
+<footer class="band"><div class="wrap"><span>SUMAJ S.A.C. · Los Jardines de Ñaña, Lurigancho-Chosica · WhatsApp +51 900 000 000 (número de ejemplo)</span><span>Prototipo académico · ESAN · Grupo 6 · 2026</span></div></footer>
+<div class="sticky" id="sticky"><span id="sp">S/ 590</span><button class="btn ghost" style="border-color:var(--greenInk);color:var(--greenInk);min-height:40px;padding:8px 14px" onclick="document.getElementById('wa').click()">Cotizar</button></div>
+
+<dialog id="dlg"><h3 class="disp" style="font-size:24px;color:var(--green)">Tu mensaje para el taller</h3><div class="wa" id="msg"></div><p style="font-size:13px;color:var(--soft);margin:0 0 12px">En el sitio real, este botón abre WhatsApp con este mensaje. En el prototipo no se envía nada.</p><form method="dialog"><button class="btn">Entendido</button></form></dialog>
+
+<script>
+{
+const $ = (id) => document.getElementById(id);
+const COLORS = [["Roble natural", "#c69c6d"], ["Blanco nieve", "#f1efe9"], ["Nogal", "#7a5434"], ["Gris grafito", "#5b5f61"], ["Cedro", "#a8693f"]];
+const PRESETS = [
+  { n: "Librero", w: 80, h: 180, d: 30, s: 4, doors: false, drawer: false, led: false, back: true, c: 0 },
+  { n: "Centro de TV", w: 160, h: 60, d: 40, s: 1, doors: true, drawer: true, led: true, back: true, c: 2 },
+  { n: "Estante alto", w: 60, h: 200, d: 30, s: 5, doors: true, drawer: false, led: false, back: true, c: 1 },
+];
+const BASE = PRESETS[0];
+let view34 = true, preset = 0;
+const qp = parseInt(new URLSearchParams(location.search).get("p"), 10);
+if (qp >= 0 && qp < PRESETS.length) preset = qp;
+let st = { ...PRESETS[preset] };
+
+// precio: costo variable del capítulo II (materiales S/ 280, mano de obra S/ 100, transporte S/ 8) escalado por área de melamina
+const area = (c) => {
+  const W = c.w / 100, H = c.h / 100, D = c.d / 100;
+  return 2 * H * D + 2 * W * D + c.s * (W - 0.036) * D + (c.doors ? W * Math.min(H * 0.42, 0.7) : 0) + (c.drawer ? W * 0.18 + 0.6 * W * D : 0);
+};
+const A0 = area(BASE), B0 = (BASE.w / 100) * (BASE.h / 100);
+function cotiza(c) {
+  const a = area(c) / A0, b = c.back ? (c.w / 100) * (c.h / 100) / B0 : 0;
+  const mat = 280 * (0.72 * a + 0.13 * b + 0.15) + (c.doors ? 38 : 0) + (c.drawer ? 32 : 0) + (c.led ? 85 : 0);
+  const mo = 100 * (0.55 + 0.45 * a) + (c.doors ? 18 : 0) + (c.drawer ? 14 : 0) + (c.led ? 10 : 0);
+  const sin = (mat + mo + 8) * 500 / 388;
+  return { mat, mo, sin, con: Math.round(sin * 1.18 / 10) * 10, m2: area(c) };
+}
+const soles = (v) => "S/ " + Math.round(v).toLocaleString("es-PE");
+
+// dibujo 3/4 con cotas
+const fig = $("fig");
+function shade(hex, f) { const n = parseInt(hex.slice(1), 16); const ch = (s) => Math.max(0, Math.min(255, Math.round(((n >> s) & 255) * f))); return `rgb(${ch(16)},${ch(8)},${ch(0)})`; }
+function draw() {
+  const W = fig.clientWidth, H = fig.clientHeight, c = st, col = COLORS[c.c][1];
+  const dk = view34 ? 0.55 : 0, dy = view34 ? 0.3 : 0;
+  const padL = 92, padB = 64, padT = 64, padR = view34 ? 104 : 40;
+  const tv = c.h <= 90 && c.w >= 120;
+  const totW = c.w + c.d * dk, totH = c.h + c.d * dy + (tv ? 62 : 0);
+  const k = Math.min((W - padL - padR) / totW, (H - padT - padB) / totH);
+  const x0 = padL + ((W - padL - padR) - totW * k) / 2, y0 = H - padB;
+  const fw = c.w * k, fh = c.h * k, ox = c.d * dk * k, oy = c.d * dy * k, t = 1.8 * k;
+  const P = (pts) => pts.map((p) => p.join(",")).join(" ");
+  let s = `<defs><linearGradient id="led" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd58a" stop-opacity=".85"/><stop offset="1" stop-color="#ffd58a" stop-opacity="0"/></linearGradient></defs>`;
+  s += `<ellipse cx="${x0 + fw / 2 + ox / 2}" cy="${y0 + 6}" rx="${fw / 2 + ox}" ry="${Math.max(8, oy / 2 + 6)}" fill="var(--floor)"/>`;
+  // fondo e interior
+  const ix = x0 + t, iw = fw - 2 * t, iy = y0 - fh + t, ih = fh - 2 * t;
+  s += `<rect x="${ix}" y="${iy}" width="${iw}" height="${ih}" fill="${c.back ? shade(col, .72) : "var(--bg)"}"/>`;
+  if (view34) s += `<polygon points="${P([[ix, iy], [ix + ox, iy - oy], [ix + ox, iy + ih - oy], [ix, iy + ih]])}" fill="${shade(col, .62)}"/>`;
+  // repisas, de arriba a abajo
+  const doorH = c.doors ? Math.min(c.h * 0.42, 70) * k : 0, drH = c.drawer ? 18 * k : 0, low = doorH + drH;
+  const free = ih - low, n = c.s, gap = (free) / (n + 1);
+  const shelfY = Array.from({ length: n }, (_, i) => iy + gap * (i + 1));
+  let seed = 7 + c.w + c.h * 3 + c.s * 11;
+  const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  const books = ["#38503a", "#b9833a", "#8c3b2e", "#d9cfbd", "#4b5d73", "#6f7f5a"];
+  const levels = [...shelfY, iy + free].slice(0, n + 1);
+  levels.forEach((yb, li) => {   // objetos sobre cada nivel
+    if (c.led && li < n) s += `<rect x="${ix}" y="${yb - gap + t}" width="${iw}" height="${Math.min(gap * .7, 40)}" fill="url(#led)"/>`;
+    let x = ix + 6, lim = ix + iw - 6, top = yb - (li === 0 ? iy : levels[li - 1]) - t;
+    if (top < 22) return;
+    while (x < lim - 8) {
+      const r = rnd();
+      if (r < .62) { const bw = (2.5 + rnd() * 2.5) * k, bh = Math.min(top * (.55 + rnd() * .35), 30 * k); if (x + bw > lim) break; s += `<rect x="${x}" y="${yb - bh}" width="${bw}" height="${bh}" fill="${books[Math.floor(rnd() * books.length)]}" rx="1"/>`; x += bw + 1; }
+      else if (r < .75) { const pw = 10 * k, ph = Math.min(top * .6, 18 * k); if (x + pw > lim) break; s += `<rect x="${x}" y="${yb - ph * .45}" width="${pw}" height="${ph * .45}" rx="2" fill="#c8b8a0"/><ellipse cx="${x + pw / 2}" cy="${yb - ph * .55}" rx="${pw * .75}" ry="${ph * .38}" fill="#6f8f62"/>`; x += pw + 10 * k; }
+      else x += (8 + rnd() * 14) * k;
+    }
+  });
+  shelfY.forEach((y) => {
+    if (view34) s += `<polygon points="${P([[ix, y], [ix + ox, y - oy], [ix + iw + ox, y - oy], [ix + iw, y]])}" fill="${shade(col, 1.08)}"/>`;
+    s += `<rect x="${ix}" y="${y}" width="${iw}" height="${t}" fill="${shade(col, .9)}"/>`;
+  });
+  // cuerpo: laterales, techo y base
+  const fr = shade(col, .95);
+  s += `<rect x="${x0}" y="${y0 - fh}" width="${t}" height="${fh}" fill="${fr}"/><rect x="${x0 + fw - t}" y="${y0 - fh}" width="${t}" height="${fh}" fill="${fr}"/>`;
+  s += `<rect x="${x0}" y="${y0 - fh}" width="${fw}" height="${t}" fill="${fr}"/><rect x="${x0}" y="${y0 - t}" width="${fw}" height="${t}" fill="${fr}"/>`;
+  // cajón y puertas
+  if (c.drawer) { const yy = y0 - t - low; s += `<rect x="${ix}" y="${yy}" width="${iw}" height="${drH}" fill="${col}" stroke="${shade(col, .78)}"/><rect x="${ix + iw / 2 - 12 * k / 2}" y="${yy + drH / 2 - 1.5}" width="${12 * k}" height="3" rx="1.5" fill="#3b3b3b"/>`; }
+  if (c.doors) { const yy = y0 - t - doorH; for (let j = 0; j < 2; j++) { const dx = ix + j * iw / 2; s += `<rect x="${dx + 1}" y="${yy}" width="${iw / 2 - 2}" height="${doorH}" fill="${col}" stroke="${shade(col, .78)}"/><rect x="${j ? dx + 6 : dx + iw / 2 - 9}" y="${yy + 8}" width="3" height="${Math.min(14 * k, doorH * .4)}" rx="1.5" fill="#3b3b3b"/>`; } }
+  if (view34) {
+    s += `<polygon points="${P([[x0 + fw, y0 - fh], [x0 + fw + ox, y0 - fh - oy], [x0 + fw + ox, y0 - oy], [x0 + fw, y0]])}" fill="${shade(col, .8)}"/>`;
+    s += `<polygon points="${P([[x0, y0 - fh], [x0 + ox, y0 - fh - oy], [x0 + fw + ox, y0 - fh - oy], [x0 + fw, y0 - fh]])}" fill="${shade(col, 1.12)}"/>`;
+  }
+  if (tv) { const tw = Math.min(fw * .6, 105 * k), th = tw * .56, tx = x0 + (fw - tw) / 2 + ox / 2, ty = y0 - fh - oy / 2 - 8 - th; s += `<rect x="${tx}" y="${ty}" width="${tw}" height="${th}" rx="4" fill="#1c1f22"/><rect x="${tx + 5}" y="${ty + 5}" width="${tw - 10}" height="${th - 10}" rx="2" fill="#2c3a33"/><rect x="${tx + tw / 2 - 18}" y="${ty + th}" width="36" height="${8 + oy / 2}" fill="#2a2a2a"/>`; }
+  // cotas
+  const ink = "var(--soft)";
+  s += `<g stroke="${ink}" stroke-width="1"><path d="M${x0} ${y0 + 28}H${x0 + fw}M${x0} ${y0 + 22}v12M${x0 + fw} ${y0 + 22}v12"/><path d="M${x0 - 26} ${y0}V${y0 - fh}M${x0 - 32} ${y0}h12M${x0 - 32} ${y0 - fh}h12"/></g>`;
+  s += `<g fill="var(--ink)" font-size="14" font-family="Montserrat,sans-serif" style="paint-order:stroke;stroke:var(--panel);stroke-width:4px"><text x="${x0 + fw / 2}" y="${y0 + 50}" text-anchor="middle">${c.w} cm</text><text x="${x0 - 34}" y="${y0 - fh / 2}" text-anchor="end" dominant-baseline="middle">${c.h} cm</text>`;
+  if (view34) s += `<text x="${x0 + fw + ox + 10}" y="${y0 - fh / 2 - oy / 2}" dominant-baseline="middle">fondo ${c.d} cm</text>`;
+  s += `</g>`;
+  fig.innerHTML = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">${s}</svg>`;
+}
+const ro = new ResizeObserver(draw); ro.observe(fig);
+
+function render() {
+  $("w").value = st.w; $("h").value = st.h; $("d").value = st.d;
+  $("wo").textContent = st.w + " cm"; $("ho").textContent = st.h + " cm"; $("do").textContent = st.d + " cm"; $("no").textContent = st.s;
+  ["doors", "drawer", "led", "back"].forEach((k) => ($(k).checked = st[k]));
+  document.querySelectorAll("#sw button").forEach((b, i) => b.setAttribute("aria-pressed", i === st.c));
+  document.querySelectorAll("#presets .chip").forEach((b, i) => b.setAttribute("aria-pressed", i === preset));
+  $("swname").textContent = "Color: " + COLORS[st.c][0];
+  const q = cotiza(st);
+  $("price").textContent = soles(q.con); $("sp").textContent = soles(q.con) + " con IGV";
+  $("area").textContent = q.m2.toFixed(2).replace(".", ",") + " m² de melamina";
+  const parts = [["Materiales y herrajes", q.mat], ["Corte, armado y acabado", q.mo], ["Entrega y visita de medición", 8 + 10], ["Margen del taller", q.sin - q.mat - q.mo - 18], ["IGV (18%)", q.con - q.sin]];
+  $("break").innerHTML = parts.map(([a, b]) => `<span>${a}</span><span>${soles(b)}</span>`).join("");
+  draw();
+}
+const resumen = () => { const q = cotiza(st); return `Hola, SUMAJ. Diseñé un mueble de repisas en la web:\n• Medidas: ${st.w} × ${st.h} × ${st.d} cm\n• Repisas: ${st.s}\n• Puertas: ${st.doors ? "sí" : "no"} · Cajón: ${st.drawer ? "sí" : "no"} · LED: ${st.led ? "sí" : "no"}\n• Color: ${COLORS[st.c][0]}\n• Precio referencial: ${soles(q.con)} con IGV\n¿Podemos coordinar la visita de medición?`; };
+
+$("presets").innerHTML = PRESETS.map((p, i) => `<button class="chip" data-i="${i}">${p.n} · ${soles(cotiza(p).con)}</button>`).join("");
+$("presets").addEventListener("click", (e) => { const b = e.target.closest("button"); if (!b) return; preset = +b.dataset.i; st = { ...PRESETS[preset] }; render(); });
+$("sw").innerHTML = COLORS.map(([n, h], i) => `<button style="background:${h}" aria-label="${n}" data-i="${i}"></button>`).join("");
+$("sw").addEventListener("click", (e) => { const b = e.target.closest("button"); if (!b) return; st.c = +b.dataset.i; render(); });
+["w", "h", "d"].forEach((k) => $(k).addEventListener("input", (e) => { st[k] = +e.target.value; preset = -1; render(); }));
+["doors", "drawer", "led", "back"].forEach((k) => $(k).addEventListener("change", (e) => { st[k] = e.target.checked; preset = -1; render(); }));
+$("nminus").onclick = () => { st.s = Math.max(1, st.s - 1); preset = -1; render(); };
+$("nplus").onclick = () => { st.s = Math.min(Math.max(1, Math.floor(st.h / 28)), st.s + 1); preset = -1; render(); };
+$("v34").onclick = () => { view34 = true; $("v34").setAttribute("aria-pressed", true); $("vfr").setAttribute("aria-pressed", false); draw(); };
+$("vfr").onclick = () => { view34 = false; $("vfr").setAttribute("aria-pressed", true); $("v34").setAttribute("aria-pressed", false); draw(); };
+$("reset").onclick = () => { preset = 0; st = { ...BASE }; render(); };
+$("copy").onclick = async () => { try { await navigator.clipboard.writeText(resumen()); $("copy").textContent = "Copiado ✓"; } catch (e) { $("copy").textContent = "No se pudo copiar"; } setTimeout(() => ($("copy").textContent = "Copiar diseño"), 1800); };
+$("wa").onclick = () => { $("msg").textContent = resumen(); $("dlg").showModal(); };
+$("ref").innerHTML = [...PRESETS, { n: "Repisa flotante doble", w: 100, h: 50, d: 25, s: 1, doors: false, drawer: false, led: false, back: false, c: 0 }]
+  .map((p) => `<tr><td>${p.n}</td><td>${p.w} × ${p.h} × ${p.d} cm</td><td>${soles(cotiza(p).con)}</td></tr>`).join("");
+render();
+}
+</script>
+</body>
+</html>
